@@ -70,12 +70,12 @@ class TeltonikaServer {
             case "who": {
                 sockets[clientData.name] = socket;
                 console.log('adding socket ', clientData.name);
-                // socket.write("gg");
+                // socket.write(JSON.stringify({ok:1})+'\n');
+                this.writeJsonMessageToCLientSocket(socket, {ok:1})
                 break;
             }
             case "gpio": {
                 console.log('gpio')
-                console.log(clientData)
                 const to = clientData.to;
                 if(!to) {
                     console.log("please provide the to router name");
@@ -83,8 +83,11 @@ class TeltonikaServer {
                 const socketInstance = sockets[to];
                 if(!socketInstance){
                     console.log('socket ', to , ' not found');
+                    // throw new Error('no socket');
+                } else {
+                  this.writeJsonMessageToCLientSocket(socketInstance,clientData);
                 }
-                socketInstance.write(clientData);
+                
                 break;
             }
             default: {
@@ -108,6 +111,10 @@ class TeltonikaServer {
         console.log(`Error: ${err}`);
       });
     });
+  }
+
+  writeJsonMessageToCLientSocket(socket, jsonMessage){
+    socket.write(JSON.stringify(jsonMessage)+'\n');
   }
 
   executeCommandOnTeltonika(command, delay = 5000, nextExecuteCommand) {

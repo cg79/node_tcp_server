@@ -35,7 +35,7 @@ class TeltonikaTcpClient {
   }
 
   sendMessageToServer(command) {
-    this.client.write(JSON.stringify(command));
+    this.client.write(JSON.stringify(command) + "\r\n");
   }
 
   sendToServerWhoIAm() {
